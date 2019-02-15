@@ -9,6 +9,8 @@ using System.Collections;
 using System.Reflection;
 using Valve.VR;
 
+#pragma warning disable 0618
+
 [RequireComponent(typeof(Camera))]
 public class SteamVR_Camera : MonoBehaviour
 {

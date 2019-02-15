@@ -7,6 +7,8 @@
 using UnityEngine;
 using Valve.VR;
 
+#pragma warning disable 0618
+
 public class SteamVR_Stats : MonoBehaviour
 {
 	public GUIText text;

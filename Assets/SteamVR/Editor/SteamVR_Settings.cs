@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
+#pragma warning disable 0618
+
 [InitializeOnLoad]
 public class SteamVR_Settings : EditorWindow
 {
