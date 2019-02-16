@@ -9,21 +9,28 @@ namespace Euclid {
 		// the base constuctions
 		
 		// Construct a plane given three points on the plane, or null if the three points are collinear
-		public static Figure ConstructPlane (Figure alpha, Figure beta, Figure gamma) {
-			if (alpha is Point && beta is Point && gamma is Point)
+		public static Figure ConstructPlane (Figure fAlpha, Figure fBeta, Figure fGamma) {
+			if (fAlpha is Point && fBeta is Point && fGamma is Point)
             {
-                Point a = alpha as Point;
-                Point b = beta as Point;
-                Point c = gamma as Point;
+                Point a = fAlpha as Point;
+                Point b = fBeta as Point;
+                Point c = fGamma as Point;
 
 
             }
             return new Null();
 		}
-		
-		public static Figure ConstructSphere (Figure center, Figure p) {
-			return new Null();
-		}
+        
+		public static Figure ConstructSphere (Figure fCenter, Figure fP) {
+            if (fCenter is Point && fP is Point)
+            {
+                Point center = fCenter as Point;
+                Point p = fP as Point;
+                //return new Sphere(center, p);
+                return new Null();
+            }
+            return new Null();
+        }
 		
 		public static List<Figure> Intersection (Figure alpha, Figure beta) {
 			return new List<Figure>();
