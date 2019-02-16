@@ -12,6 +12,10 @@ namespace Euclid {
 		public static Figure ConstructPlane (Figure alpha, Figure beta, Figure gamma) {
 			if (alpha is Point && beta is Point && gamma is Point)
             {
+                Point a = (Point)alpha;
+                Point b = (Point)beta;
+                Point c = (Point)gamma;
+
 
             }
             return new Null();
