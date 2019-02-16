@@ -6,6 +6,8 @@ namespace Euclid {
 	// parent class for Point, Line, etc.
 	// non-construction data type in Construction
 	public class Figure {
+        public Dictionary<String, String> renderSpecs;
+
 		// the base constuctions
 		
 		// Construct a plane given three points on the plane, or null if the three points are collinear
@@ -16,7 +18,14 @@ namespace Euclid {
                 Point b = fBeta as Point;
                 Point c = fGamma as Point;
 
+                Vector3 x = a.p - b.p;
+                Vector3 y = c.p - b.p;
+                Vector3 normal = Vector3.Cross(x, y).normalized;
 
+                if (normal == Vector3.zero)
+                    return new Null();
+
+                return new Plane(a.p, normal);
             }
             return new Null();
 		}
