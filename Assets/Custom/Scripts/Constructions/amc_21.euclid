@@ -1,0 +1,36 @@
+
+c = point(0 0 0)
+b = point(4 0 0)
+a = point(0 3 0)
+d = point(4 0 4)
+
+l1 = line(b c)
+l1.start = b
+l1.end = c
+
+l2 = line(a b)
+l2.start = a
+l2.end = b
+
+l3 = line(a c)
+l3.start = a
+l3.end = c
+
+l4 = line(a d)
+l4.start = a
+l4.end = d
+
+l5 = line(b d)
+l5.start = b
+l5.end = d
+
+l6 = line(c d)
+l6.start = c
+l6.end = d
+
+l1.render = 1
+l2.render = 1
+l3.render = 1
+l4.render = 1
+l5.render = 1
+l6.render = 1
