@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Util {
-    public const float EPSILON = 1e-5f;
+    public const float EPSILON = 1e-6f;
     public static bool Approximately (float x, float y) {
         return Mathf.Abs(x-y) <= EPSILON;
     }

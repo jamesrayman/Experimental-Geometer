@@ -18,7 +18,7 @@ public class RenderMaster : MonoBehaviour {
 
     private void Start() {
         main = this;
-        diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/circumsphere.euclid");
+        diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/demo.euclid");
 
         Render();
     }
