@@ -3,6 +3,15 @@ a = point(0.0 1.0 0.0)
 b = point(0.0 1.1 0.0)
 c = point(0.1 1.0 0.0)
 d = point(0.2 1.2 0.1)
+x = point(0.35 1.1 0.2)
+y = point(0.30 0.9 0.1)
+ba = point(0.30 0.8 0.1)
+bb = point(0.35 0.7 0.0)
+bc = point(0.30 0.6 0.2) 
+bd = point(0.0 0.5 0.1)
+bin = binormal(line(ba bb) line(bc bd))
+
+m = intersection(line(x y) midnormal(x y))
 
 s = circumsphere(a b c d)
 cen = center(s)
@@ -15,12 +24,31 @@ l5 = line(b c)
 l6 = line(c d)
 
 
+la = line(ba bb)
+lb = line(bc bd)
+
+la.render = 1
+lb.render = 1
+la.start = ba
+la.end = bb
+lb.start = bc
+lb.end = bd
+
+ba.render = 1
+bb.render = 1
+bc.render = 1
+bd.render = 1
+bin.render = 1
+
 cen.render = 1
 s.render = 1
 a.render = 1
 b.render = 1
 c.render = 1
 d.render = 1
+x.render = 1
+y.render = 1
+m.render = 1
 
 l1.render = 1
 l1.start = a
