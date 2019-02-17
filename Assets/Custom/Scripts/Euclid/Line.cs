@@ -36,11 +36,26 @@ namespace Euclid {
             return new List<Figure>();
         }
         public override List<Figure> Intersection(Plane plane) {
-            return new List<Figure>();
+            if (Util.Approximately(Vector3.Dot(slope, plane.normal), 0)) {
+                if (Util.Approximately(Vector3.Dot(p - plane.p, plane.normal), 0)) {
+                    return new List<Figure> { this };
+                }
+                return new List<Figure>();
+            }
+            float d = Vector3.Dot(slope, plane.normal) / Vector3.Dot(p - plane.p, plane.normal);
+            return new List<Figure> { new Point(p + d * slope) };
         }
         public override List<Figure> Intersection(Sphere sphere) {
             return new List<Figure>();
         }
+
+        public override Figure Binormal(Point point) {
+            return point.Binormal(this);
+        }
+        public override Figure Binormal(Line line) {
+            return new Null();
+        }
+        // Binormal is null for a line and a plane
 
         public override Figure PointOn() {
             return new Point(Util.RandomValue() * slope + p);
