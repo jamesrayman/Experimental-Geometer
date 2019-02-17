@@ -24,7 +24,18 @@ namespace Euclid {
             return line.Intersection(this);
         }
         public override List<Figure> Intersection(Circle circle) {
-            return new List<Figure>();
+            List<Figure> sphereIntersects = (new Plane(circle.center, circle.normal)).Intersection(this);
+            if (sphereIntersects.Count == 0)
+                return new List<Figure>();
+            if (sphereIntersects[0] is Point) {
+                Point p = sphereIntersects[0] as Point;
+                if (Util.Approximately((p.p - circle.center).magnitude, circle.radius))
+                    return new List<Figure> { p };
+                return new List<Figure>();
+            }
+            else {
+                return sphereIntersects[0].Intersection(circle);
+            }
         }
         public override List<Figure> Intersection(Plane plane) {
             return plane.Intersection(this);
