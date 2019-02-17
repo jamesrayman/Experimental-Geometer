@@ -1,0 +1,10 @@
+
+alpha = point ( 3 4 5 )
+beta = point ( 4 6 7 )
+omega = sphere ( alpha beta )
+
+test = construction a b -> p {
+    p = line ( a b )
+}
+
+alpha.render = 1
