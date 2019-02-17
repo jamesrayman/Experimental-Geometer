@@ -17,6 +17,42 @@ namespace Euclid {
             this.radius = (p - center).magnitude;
         }
 
+        public override List<Figure> Intersection(Point point) {
+            return point.Intersection(this);
+        }
+        public override List<Figure> Intersection(Line line) {
+            return line.Intersection(this);
+        }
+        public override List<Figure> Intersection(Circle circle) {
+            return new List<Figure>();
+        }
+        public override List<Figure> Intersection(Plane plane) {
+            return plane.Intersection(this);
+        }
+        public override List<Figure> Intersection(Sphere sphere) {
+            if (this == sphere) return new List<Figure> { this };
+            float d = (center - sphere.center).magnitude;
+            if (Util.Approximately(d, radius + sphere.radius)) {
+                Vector3 p = (sphere.center - center) * radius / (radius + sphere.radius) + center;
+                return new List<Figure> { new Point(p) };
+            }
+            if (Util.Approximately(d + radius, sphere.radius)) {
+                Vector3 p = (center - sphere.center) / d * sphere.radius + sphere.center;
+                return new List<Figure> { new Point(p) };
+            }
+            if (Util.Approximately(d + sphere.radius, radius)) {
+                Vector3 p = (sphere.center - center) / d * radius + center;
+                return new List<Figure> { new Point(p) };
+            }
+            if (d > radius + sphere.radius || radius > d + sphere.radius || sphere.radius > d + radius)
+                return new List<Figure>();
+            float h = .5f + (radius * radius - sphere.radius * sphere.radius) / (2 * d * d);
+            float r = Mathf.Sqrt(radius * radius - h * h * d * d);
+            Vector3 c = center + h * (sphere.center - center);
+            Vector3 norm = sphere.center - center;
+            return new List<Figure> { new Circle(c, r, norm) };
+        }
+
         public override Figure PointOn () {
             return new Point(Random.onUnitSphere * radius + center);
         }
