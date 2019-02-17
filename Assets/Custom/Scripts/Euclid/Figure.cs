@@ -6,9 +6,15 @@ namespace Euclid {
 	// parent class for Point, Line, etc.
 	// non-construction data type in Construction
 	public class Figure {
-        public Dictionary<String, String> renderSpecs;
+        public Dictionary<string, object> properties;
+        public Figure() {
+            properties = new Dictionary<string, object>();
+        }
 
-		// the base constuctions
+        // the base constuctions
+        public static Figure ConstructPoint(float x, float y, float z) {
+            return new Point(x, y, z);
+        }
 		
 		// Construct a plane given three points on the plane, or null if the three points are collinear
 		public static Figure ConstructPlane (Figure fAlpha, Figure fBeta, Figure fGamma) {

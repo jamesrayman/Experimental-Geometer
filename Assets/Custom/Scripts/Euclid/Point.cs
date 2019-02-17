@@ -10,5 +10,13 @@ namespace Euclid {
 		public Point (Vector3 p) {
 			this.p = p;
 		}
+
+        public Point(float x, float y, float z) {
+            p = new Vector3(x, y, z);
+        }
+
+        public override string ToString() {
+            return p.ToString();
+        }
 	}
 }
