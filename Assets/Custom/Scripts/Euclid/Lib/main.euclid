@@ -1,0 +1,27 @@
+
+midnormal = construction a b -> p {
+    cir = intersection(sphere(a b) sphere(b a))
+    p = plane(point_on(cir) point_on(cir) point_on(cir))
+}
+
+midpoint = construction a b -> p {
+    p = intersection(line(a b) midnormal(a b))
+}
+
+equilateral = construction a b -> l1 l2 l3 {
+    l1 = line(a b)
+    c = point_on(intersection(sphere(a b) sphere(b a)))
+    l2 = line(a c)
+    l3 = line(b c)
+}
+
+tetrahedron = construction a b -> l1 l2 l3 l4 l5 l6 {
+    l1 = line(a b)
+    c = point_on(intersection(sphere(a b) sphere(b a)))
+    l2 = line(a c)
+    l3 = line(b c)
+    d = intersection(intersection(sphere(a b) sphere(b a)) sphere(c a))
+    l4 = line(a d)
+    l5 = line(b d)
+    l6 = line(c d)
+}
