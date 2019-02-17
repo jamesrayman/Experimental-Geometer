@@ -79,6 +79,11 @@ namespace Euclid {
                 tokenLoc++;
                 return new FunctionExpression(name, args);
             }
+            else if (tokenLoc + 2 < tokens.Count && tokens[tokenLoc + 1].token == "." && real.Match(tokens[tokenLoc].token).Success && real.Match(tokens[tokenLoc + 2].token).Success) {
+                RealExpression res = new RealExpression(float.Parse(tokens[tokenLoc].token + tokens[tokenLoc].token + tokens[tokenLoc].token));
+                tokenLoc += 3;
+                return res;
+            }
             else if (real.Match(tokens[tokenLoc].token).Success) {
                 return new RealExpression(float.Parse(tokens[tokenLoc++].token));
             }
@@ -150,6 +155,8 @@ namespace Euclid {
 
         public RootStatement ConstructAbstractSyntaxTree(List<Token> tokens) {
             this.tokens = tokens;
+            // foreach (Token s in tokens)
+            //     Debug.Log(s.token);
             this.tokenLoc = 0;
             return new RootStatement(constructBlockStatement());
         }
@@ -172,6 +179,7 @@ namespace Euclid {
             tokenRegexes.Add(new Regex("^[}]$"));
             tokenRegexes.Add(new Regex("^[(]$"));
             tokenRegexes.Add(new Regex("^[)]$"));
+            Regex real = new Regex("-?[0-9]+\\.?[0-9]*");
             List<Token> tokens = new List<Token>();
             string currentToken = "";
             int lastTokenType = -1, currentCharNum = 0, currentLineNum = 0;
