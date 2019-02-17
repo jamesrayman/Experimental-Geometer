@@ -57,6 +57,7 @@ namespace Euclid {
                     if (fig.properties.ContainsKey("render")) {
                         if (Mathf.Approximately((float) fig.properties["render"], 1)) {
                             render.Add(fig);
+                            fig.properties["name"] = variable;
                         }
                     }
                 }
@@ -75,7 +76,7 @@ namespace Euclid {
                 Statement s = root.block.children[i];
                 if (s is AssignmentStatement) {
                     AssignmentStatement assign = s as AssignmentStatement;
-                    if (assign.variables == variables && assign.expression is FunctionExpression) {
+                    if (assign.variables.Count == 1 && assign.variables[0] == variables[0] && assign.expression is FunctionExpression) {
                         FunctionExpression func = assign.expression as FunctionExpression;
                         if (func.name == "point") {
                             root.block.children[i] = new AssignmentStatement(variables, value);
@@ -302,7 +303,9 @@ namespace Euclid {
                     arg2 = ((List<object>) args[1])[0];
                 if (arg3 is List<object>)
                     arg3 = ((List<object>) args[2])[0];
-                return new List<object>() { Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3) };
+                Figure fig = Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3);
+                fig.properties["movable"] = 1;
+                return new List<object> { fig };
             }
         }
 
