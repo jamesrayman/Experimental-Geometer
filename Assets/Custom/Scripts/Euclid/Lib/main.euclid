@@ -37,3 +37,8 @@ tetrahedron = construction a b -> l1 l2 l3 l4 l5 l6 {
     l6.start = c
     l6.end = d
 }
+
+circumsphere = construction a b c d -> s {
+    cen = intersection(intersection(midnormal(a b) midnormal(b c)) midnormal(c d))
+    s = sphere(cen, a)
+}
