@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RenderMaster : MonoBehaviour {
+    public static RenderMaster main;
+
     List<Euclid.Figure> figures;
     public GameObject pointPrefab;
     public GameObject linePrefab;
@@ -11,9 +13,12 @@ public class RenderMaster : MonoBehaviour {
     public GameObject circlePrefab;
 
     public Euclid.Construction diagram;
+    public Transform dragged = null;
+    public string draggedName = null;
 
     private void Start() {
-        diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/test.euclid");
+        main = this;
+        diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/circumsphere.euclid");
 
         Render();
     }
@@ -22,15 +27,24 @@ public class RenderMaster : MonoBehaviour {
         figures = diagram.Execute();
 
         for (int i = transform.childCount-1; i > -1; i--) {
-            Destroy(transform.GetChild(i).gameObject);
+            if (transform.GetChild(i) != dragged)
+                Destroy(transform.GetChild(i).gameObject);
         }
         foreach (Euclid.Figure f in figures) {
             if (f is Euclid.Point) {
                 var point = f as Euclid.Point;
+                if ((point.properties["name"] as string) == draggedName) {
+                    continue;
+                }
                 GameObject g = Instantiate<GameObject>(pointPrefab);
                 g.transform.parent = transform;
                 g.SetActive(true);
                 g.transform.SetPositionAndRotation(point.p, Quaternion.identity);
+                if (point.properties.ContainsKey("movable") && (float)point.properties["movable"] > 0.5f) {
+                    g.GetComponent<Draggable>().id = point.properties["name"] as string;
+                } else {
+                    g.GetComponent<VRTK.VRTK_InteractableObject>().isGrabbable = false;
+                }
             }
             if (f is Euclid.Line) {
                 var line = f as Euclid.Line;
