@@ -46,7 +46,11 @@ namespace Euclid {
             }
             if (d > radius + sphere.radius || radius > d + sphere.radius || sphere.radius > d + radius)
                 return new List<Figure>();
-            return new List<Figure>();
+            float h = .5f + (radius * radius - sphere.radius * sphere.radius) / (2 * d * d);
+            float r = Mathf.Sqrt(radius * radius - h * h * d * d);
+            Vector3 c = center + h * (sphere.center - center);
+            Vector3 norm = sphere.center - center;
+            return new List<Figure> { new Circle(c, r, norm) };
         }
 
         public override Figure PointOn () {
