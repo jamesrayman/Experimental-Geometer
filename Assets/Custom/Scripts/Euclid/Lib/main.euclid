@@ -17,11 +17,23 @@ equilateral = construction a b -> l1 l2 l3 {
 
 tetrahedron = construction a b -> l1 l2 l3 l4 l5 l6 {
     l1 = line(a b)
+    l1.start = a
+    l1.end = b
     c = point_on(intersection(sphere(a b) sphere(b a)))
     l2 = line(a c)
+    l2.start = a
+    l2.end = c
     l3 = line(b c)
+    l3.start = b
+    l3.end = c
     d = intersection(intersection(sphere(a b) sphere(b a)) sphere(c a))
     l4 = line(a d)
+    l4.start = a
+    l4.end = d
     l5 = line(b d)
+    l5.start = b
+    l5.end = d
     l6 = line(c d)
+    l6.start = c
+    l6.end = d
 }
