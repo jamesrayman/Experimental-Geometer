@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RenderMaster : MonoBehaviour {
+    public static RenderMaster main;
+
     List<Euclid.Figure> figures;
     public GameObject pointPrefab;
     public GameObject linePrefab;
@@ -10,24 +12,39 @@ public class RenderMaster : MonoBehaviour {
     public GameObject planePrefab;
     public GameObject circlePrefab;
 
+    public Euclid.Construction diagram;
+    public Transform dragged = null;
+    public string draggedName = null;
+
     private void Start() {
-        Euclid.Construction diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/test.euclid");
-        figures = diagram.Execute();
+        main = this;
+        diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/circumsphere.euclid");
 
         Render();
     }
 
     public void Render () {
+        figures = diagram.Execute();
+
         for (int i = transform.childCount-1; i > -1; i--) {
-            Destroy(transform.GetChild(i));
+            if (transform.GetChild(i) != dragged)
+                Destroy(transform.GetChild(i).gameObject);
         }
         foreach (Euclid.Figure f in figures) {
             if (f is Euclid.Point) {
                 var point = f as Euclid.Point;
+                if ((point.properties["name"] as string) == draggedName) {
+                    continue;
+                }
                 GameObject g = Instantiate<GameObject>(pointPrefab);
                 g.transform.parent = transform;
                 g.SetActive(true);
                 g.transform.SetPositionAndRotation(point.p, Quaternion.identity);
+                if (point.properties.ContainsKey("movable") && (float)point.properties["movable"] > 0.5f) {
+                    g.GetComponent<Draggable>().id = point.properties["name"] as string;
+                } else {
+                    g.GetComponent<VRTK.VRTK_InteractableObject>().isGrabbable = false;
+                }
             }
             if (f is Euclid.Line) {
                 var line = f as Euclid.Line;
@@ -47,14 +64,16 @@ public class RenderMaster : MonoBehaviour {
                 render.positionCount = 2;
                 render.SetPositions(v);
             }
+
             if (f is Euclid.Sphere) {
                 var sphere = f as Euclid.Sphere;
                 GameObject g = Instantiate<GameObject>(spherePrefab);
                 g.transform.parent = transform;
                 g.SetActive(true);
                 g.transform.SetPositionAndRotation(sphere.center, Quaternion.identity);
-                g.transform.localScale = Vector3.one * sphere.radius;
+                g.transform.localScale =  Vector3.one * 2 * sphere.radius;
             }
+
             if (f is Euclid.Plane) {
                 var plane = f as Euclid.Plane;
                 GameObject g = Instantiate<GameObject>(planePrefab);
@@ -63,6 +82,7 @@ public class RenderMaster : MonoBehaviour {
                 g.transform.SetPositionAndRotation(plane.p, Quaternion.identity);
                 g.transform.LookAt(plane.normal);
             }
+
             if (f is Euclid.Circle) {
                 var circle = f as Euclid.Circle;
                 GameObject g = Instantiate<GameObject>(circlePrefab);

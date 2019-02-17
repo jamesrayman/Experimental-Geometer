@@ -102,7 +102,7 @@ namespace Euclid {
                 return new FunctionExpression(name, args);
             }
             else if (tokenLoc + 2 < tokens.Count && tokens[tokenLoc + 1].token == "." && real.Match(tokens[tokenLoc].token).Success && real.Match(tokens[tokenLoc + 2].token).Success) {
-                RealExpression res = new RealExpression(float.Parse(tokens[tokenLoc].token + tokens[tokenLoc].token + tokens[tokenLoc].token));
+                RealExpression res = new RealExpression(float.Parse(tokens[tokenLoc].token + tokens[tokenLoc + 1].token + tokens[tokenLoc + 2].token));
                 tokenLoc += 3;
                 return res;
             }
@@ -304,7 +304,7 @@ namespace Euclid {
                 if (arg3 is List<object>)
                     arg3 = ((List<object>) args[2])[0];
                 Figure fig = Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3);
-                fig.properties["movable"] = 1;
+                fig.properties["movable"] = 1f;
                 return new List<object> { fig };
             }
         }
@@ -332,7 +332,8 @@ namespace Euclid {
                     arg1 = ((List<object>) args[0])[0];
                 if (arg2 is List<object>)
                     arg2 = ((List<object>) args[1])[0];
-                return new List<object> { Figure.ConstructSphere(arg1 as Figure, arg2 as Figure) };
+                Figure res = Figure.ConstructSphere(arg1 as Figure, arg2 as Figure);
+                return new List<object> { res };
             }
         }
 
