@@ -17,6 +17,31 @@ namespace Euclid {
 			}
 		}
 
+        public override List<Figure> Intersection(Point point) {
+            return point.Intersection(this);
+        }
+        public override List<Figure> Intersection(Line line) {
+            if (this == line)
+                return new List<Figure> { this };
+            Vector3 a = p;
+            Vector3 b = p + slope;
+            Vector3 c = line.p;
+            Vector3 d = line.p + line.slope;
+            if (Util.Approximately(Vector3.Dot(d - a, Vector3.Cross(b - a, c - a)), 0))
+                return new List<Figure>();
+            float u = Vector3.Cross(p - line.p, line.slope).magnitude / Vector3.Cross(slope, line.slope).magnitude;
+            return new List<Figure> { new Point(p + u * slope) };
+        }
+        public override List<Figure> Intersection(Circle circle) {
+            return new List<Figure>();
+        }
+        public override List<Figure> Intersection(Plane plane) {
+            return new List<Figure>();
+        }
+        public override List<Figure> Intersection(Sphere sphere) {
+            return new List<Figure>();
+        }
+
         public override Figure PointOn() {
             return new Point(Util.RandomValue() * slope + p);
         }
