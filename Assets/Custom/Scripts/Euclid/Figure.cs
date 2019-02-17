@@ -6,7 +6,10 @@ namespace Euclid {
 	// parent class for Point, Line, etc.
 	// non-construction data type in Construction
 	public class Figure {
-        public Dictionary<string, string> renderSpecs;
+        public Dictionary<string, object> properties;
+        public Figure() {
+            properties = new Dictionary<string, object>();
+        }
 
         public virtual List<Figure> Intersection(Figure f) {
             if (f is Null) {
@@ -107,11 +110,14 @@ namespace Euclid {
             return new Null();
         }
 
-        public virtual Figure Center () {
+        public virtual Figure Center() {
             return new Null();
         }
 
-		// the base constuctions
+        // the base constuctions
+        public static Figure ConstructPoint(float x, float y, float z) {
+            return new Point(x, y, z);
+        }
 		
 		// Construct a plane given three points on the plane, or null if the three points are collinear
 		public static Figure ConstructPlane (Figure fAlpha, Figure fBeta, Figure fGamma) {
@@ -172,7 +178,5 @@ namespace Euclid {
 		public static Figure Center (Figure fAlpha) {
             return fAlpha.Center();
 		}
-		
-		
 	}
 }

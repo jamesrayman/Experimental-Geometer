@@ -40,9 +40,9 @@ namespace Euclid {
             return new List<Figure>();
         }
         public override List<Figure> Intersection(Sphere sphere) {
-            if (Util.Approximately((sphere.center - p).magnitude,sphere.radius))
+            if (Util.Approximately((sphere.center - p).magnitude, sphere.radius))
                 return new List<Figure> { this };
-            return new List<Figure> ();
+            return new List<Figure>();
         }
 
 
@@ -56,7 +56,7 @@ namespace Euclid {
             return ConstructLine(new Point(p), new Point(line.p + u * line.slope));
         }
         public override Figure Binormal(Plane plane) {
-            return new Plane (this, plane.normal);
+            return new Plane(this, plane.normal);
         }
 
 
