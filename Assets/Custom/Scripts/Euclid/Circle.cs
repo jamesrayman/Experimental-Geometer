@@ -20,6 +20,41 @@ namespace Euclid {
 			}
 		}
 
+        public override List<Figure> Intersection(Point point) {
+            return point.Intersection(this);
+        }
+        public override List<Figure> Intersection(Line line) {
+            return line.Intersection(this);
+        }
+        public override List<Figure> Intersection(Circle circle) {
+            List<Figure> sphereIntersects = (new Sphere(circle.center, circle.radius)).Intersection(new Sphere(center, radius));
+            if (sphereIntersects.Count == 0) {
+                return new List<Figure>();
+            }
+            if (sphereIntersects[0] is Point) {
+                Point p = sphereIntersects[0] as Point;
+                if (Util.Approximately(Vector3.Dot(p.p - center, normal), 0) && Util.Approximately(Vector3.Dot(p.p - circle.center, circle.normal), 0))
+                    return sphereIntersects;
+                else
+                    return new List<Figure>();
+            } else {
+                List<Figure> intersects = (new Plane(circle.center, circle.normal)).Intersection(sphereIntersects[0]);
+                List<Figure> res = new List<Figure>();
+                foreach (Figure fig in intersects) {
+                    Point p = fig as Point;
+                    if (Util.Approximately(Vector3.Dot(p.p - center, normal), 0))
+                        res.Add(p);
+                }
+                return res;
+            }
+        }
+        public override List<Figure> Intersection(Plane plane) {
+            return plane.Intersection(this);
+        }
+        public override List<Figure> Intersection(Sphere sphere) {
+            return sphere.Intersection(this);
+        }
+
         public override Figure PointOn() {
             Vector3 deviation = Vector3.Cross(normal, Util.RandomVector()).normalized;
             if (deviation == Vector3.zero) return PointOn();

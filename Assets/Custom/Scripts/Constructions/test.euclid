@@ -3,8 +3,13 @@ alpha = point ( 3 4 5 )
 beta = point ( 4 6 7 )
 omega = sphere ( alpha beta )
 
-test = construction a b -> p {
-    p = line ( a b )
-}
+p = midpoint ( alpha beta )
 
-alpha.render = 1
+l1 l2 l3 l4 l5 l6 = tetrahedron(alpha beta)
+
+l1.render = 1
+l2.render = 1
+l3.render = 1
+l4.render = 1
+l5.render = 1
+l6.render = 1

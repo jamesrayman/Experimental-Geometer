@@ -15,10 +15,8 @@ namespace Euclid {
         // Constructs a new construction from file
         public Construction(string fileName) {
             this.fileName = fileName;
-            this.tokens = Tokenize(ReadFromFile());
-            this.tokenLoc = 0;
-            root = ConstructAbstractSyntaxTree();
-            Debug.Log(root.ToString());
+            root = ConstructAbstractSyntaxTree(Tokenize(ReadFromFile(fileName)));
+            // Debug.Log(root.ToString());
         }
 
         public List<Figure> Execute() {
@@ -32,6 +30,8 @@ namespace Euclid {
             Function binormal = new BinormalFunction();
             Function constructLine = new ConstructLineFunction();
             Function center = new CenterFunction();
+            Function nullFunc = new NullFunction();
+            Function space = new SpaceFunction();
             functionScope.Add("point", constructPoint);
             functionScope.Add("plane", constructPlane);
             functionScope.Add("sphere", constructSphere);
@@ -40,6 +40,15 @@ namespace Euclid {
             functionScope.Add("binormal", binormal);
             functionScope.Add("line", constructLine);
             functionScope.Add("center", center);
+            functionScope.Add("null", nullFunc);
+            functionScope.Add("space", space);
+
+            string[] files = Directory.GetFiles("Assets/Custom/Scripts/Euclid/Library", "*.euclid");
+            foreach (string f in files) {
+                RootStatement libRoot = ConstructAbstractSyntaxTree(Tokenize(ReadFromFile(f)));
+                libRoot.Run(variableScope, functionScope);
+            }
+
             root.Run(variableScope, functionScope);
             List<Figure> render = new List<Figure>();
             foreach (string variable in variableScope.Keys) {
@@ -139,32 +148,13 @@ namespace Euclid {
             return new BlockStatement(children);
         }
 
-        public RootStatement ConstructAbstractSyntaxTree() {
+        public RootStatement ConstructAbstractSyntaxTree(List<Token> tokens) {
+            this.tokens = tokens;
+            this.tokenLoc = 0;
             return new RootStatement(constructBlockStatement());
-            // RootStatement root = new RootStatement(new BlockStatement(new List<Statement>{new AssignmentStatement(new List<string>(){"a"}, new FunctionExpression("point", new List<Expression>() {
-            //     new RealExpression(5.0f), new RealExpression(4.0f), new RealExpression(3.0f)
-            // }))}));
-            // RootStatement root = new RootStatement(new BlockStatement(new List<Statement>{
-            //     new AssignmentStatement(new List<string>() {"alpha"}, new FunctionExpression("point", new List<Expression>(){ new RealExpression(3.0f), new RealExpression(4.0f), new RealExpression(5.0f) })),
-            //     new AssignmentStatement(new List<string>() {"beta"}, new FunctionExpression("point", new List<Expression>(){ new RealExpression(6.0f), new RealExpression(4.0f), new RealExpression(5.0f) })),
-            //     new AssignmentStatement(new List<string>() {"gamma"}, new FunctionExpression("point", new List<Expression>(){ new RealExpression(6.0f), new RealExpression(2.0f), new RealExpression(7.0f) })),
-            //     new ConstructionStatement("construct_test", new List<string>() {"a", "b", "c"}, new List<string>() {"p"}, new BlockStatement(new List<Statement>() {
-            //         new AssignmentStatement(new List<string>() {"p"}, new FunctionExpression("plane", new List<Expression>(){
-            //             new VariableExpression("a"),
-            //             new VariableExpression("b"),
-            //             new VariableExpression("c")
-            //         }))
-            //     })),
-            //     new AssignmentStatement(new List<string>() {"delta"}, new FunctionExpression("construct_test", new List<Expression>() { new VariableExpression("alpha"), new VariableExpression("beta"), new VariableExpression("gamma")})),
-            //     new MemberAssignmentStatement("delta", "render", new RealExpression(1.0f)),
-            //     new MemberAssignmentStatement("alpha", "render", new RealExpression(1.0f)),
-            //     new MemberAssignmentStatement("beta", "render", new RealExpression(.0f)),
-            //     new MemberAssignmentStatement("gamma", "render", new RealExpression(1.0f))
-            // }));
-            // return root;
         }
 
-        public List<string> ReadFromFile() {
+        public List<string> ReadFromFile(string fileName) {
             StreamReader reader = File.OpenText(fileName);
             List<string> result = new List<string>();
             string line;
@@ -176,12 +166,12 @@ namespace Euclid {
 
         public List<Token> Tokenize(List<string> rawConstruction) {
             List<Regex> tokenRegexes = new List<Regex>();
-            tokenRegexes.Add(new Regex("[A-Za-z_0-9]"));
-            tokenRegexes.Add(new Regex("[{]"));
-            tokenRegexes.Add(new Regex("[}]"));
-            tokenRegexes.Add(new Regex("[(]"));
-            tokenRegexes.Add(new Regex("[)]"));
-            tokenRegexes.Add(new Regex("[\\->=.]"));
+            tokenRegexes.Add(new Regex("^[A-Za-z_0-9]+$"));
+            tokenRegexes.Add(new Regex("^[\\->=.]+$"));
+            tokenRegexes.Add(new Regex("^[{]$"));
+            tokenRegexes.Add(new Regex("^[}]$"));
+            tokenRegexes.Add(new Regex("^[(]$"));
+            tokenRegexes.Add(new Regex("^[)]$"));
             List<Token> tokens = new List<Token>();
             string currentToken = "";
             int lastTokenType = -1, currentCharNum = 0, currentLineNum = 0;
@@ -190,13 +180,22 @@ namespace Euclid {
                 for (int charNum = 0; charNum < lineText.Length; charNum++) {
                     string lineChar = lineText.Substring(charNum, 1);
                     int currentTokenType = -1;
+                    Regex currentRegex = null;
                     for (int j = 0; j < tokenRegexes.Count; j++) {
                         if (tokenRegexes[j].Match(lineChar).Success) {
                             currentTokenType = j;
+                            currentRegex = tokenRegexes[j];
                             break;
                         }
                     }
                     if (currentTokenType == -1 || (currentTokenType != lastTokenType && lastTokenType != -1)) {
+                        if (currentToken.Length > 0) {
+                            tokens.Add(new Token(currentToken, currentLineNum, currentCharNum, lastTokenType));
+                        }
+                        currentToken = "";
+                        lastTokenType = -1;
+                    }
+                    if (currentRegex != null && !currentRegex.Match(currentToken + lineChar).Success) {
                         if (currentToken.Length > 0) {
                             tokens.Add(new Token(currentToken, currentLineNum, currentCharNum, lastTokenType));
                         }
@@ -231,7 +230,7 @@ namespace Euclid {
                 this.tokenType = tokenType;
             }
 
-            public string Tostring() {
+            public string ToString() {
                 return token;
             }
         }
@@ -251,7 +250,10 @@ namespace Euclid {
             }
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 for (int i = 0; i < arguments.Count; i++) {
-                    variableScope[arguments[i]] = args[i];
+                    if (args[i] is List<object>)
+                        variableScope[arguments[i]] = ((List<object>) args[i])[0];
+                    else
+                        variableScope[arguments[i]] = args[i];
                 }
                 block.Run(variableScope, functionScope);
                 List<object> res = new List<object>();
@@ -264,25 +266,55 @@ namespace Euclid {
 
         public class ConstructPointFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                return new List<object>() { Figure.ConstructPoint((float) args[0], (float) args[1], (float) args[2]) };
+                object arg1 = args[0];
+                object arg2 = args[1];
+                object arg3 = args[2];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                if (arg2 is List<object>)
+                    arg2 = ((List<object>) args[1])[0];
+                if (arg3 is List<object>)
+                    arg3 = ((List<object>) args[2])[0];
+                return new List<object>() { Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3) };
             }
         }
 
         public class ConstructPlaneFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                return new List<object>() { Figure.ConstructPlane(args[0] as Figure, args[1] as Figure, args[2] as Figure) };
+                object arg1 = args[0];
+                object arg2 = args[1];
+                object arg3 = args[2];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                if (arg2 is List<object>)
+                    arg2 = ((List<object>) args[1])[0];
+                if (arg3 is List<object>)
+                    arg3 = ((List<object>) args[2])[0];
+                return new List<object>() { Figure.ConstructPlane(arg1 as Figure, arg2 as Figure, arg3 as Figure) };
             }
         }
 
         public class ConstructSphereFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                return new List<object> { Figure.ConstructSphere(args[0] as Figure, args[1] as Figure) };
+                object arg1 = args[0];
+                object arg2 = args[1];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                if (arg2 is List<object>)
+                    arg2 = ((List<object>) args[1])[0];
+                return new List<object> { Figure.ConstructSphere(arg1 as Figure, arg2 as Figure) };
             }
         }
 
         public class IntersectionFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                List<Figure> res = Figure.Intersection(args[0] as Figure, args[1] as Figure);
+                object arg1 = args[0];
+                object arg2 = args[1];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                if (arg2 is List<object>)
+                    arg2 = ((List<object>) args[1])[0];
+                List<Figure> res = Figure.Intersection(arg1 as Figure, arg2 as Figure);
                 List<object> obj = new List<object>();
                 foreach (Figure fig in res)
                     obj.Add(fig);
@@ -292,25 +324,55 @@ namespace Euclid {
 
         public class PointOnFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
+                object arg1 = args[0];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
                 return new List<object> { Figure.PointOn(args[0] as Figure) };
             }
         }
 
         public class BinormalFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
+                object arg1 = args[0];
+                object arg2 = args[1];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                if (arg2 is List<object>)
+                    arg2 = ((List<object>) args[1])[0];
                 return new List<object> { Figure.Binormal(args[0] as Figure, args[1] as Figure) };
             }
         }
 
         public class ConstructLineFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
+                object arg1 = args[0];
+                object arg2 = args[1];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                if (arg2 is List<object>)
+                    arg2 = ((List<object>) args[1])[0];
                 return new List<object> { Figure.ConstructLine(args[0] as Figure, args[1] as Figure) };
             }
         }
 
         public class CenterFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                return new List<object> { Figure.Center(args[0] as Figure) };
+                object arg1 = args[0];
+                if (arg1 is List<object>)
+                    arg1 = ((List<object>) args[0])[0];
+                return new List<object> { Figure.Center(arg1 as Figure) };
+            }
+        }
+
+        public class NullFunction : Function {
+            public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
+                return new List<object> { new Null() };
+            }
+        }
+
+        public class SpaceFunction : Function {
+            public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
+                return new List<object> { new Space() };
             }
         }
 
@@ -369,7 +431,10 @@ namespace Euclid {
                 if (expressionResult is List<object>) {
                     List<object> rightVals = expressionResult as List<object>;
                     for (int i = 0; i < variables.Count; i++) {
-                        variableScope.Add(variables[i], rightVals[i]);
+                        if (i >= rightVals.Count)
+                            variableScope.Add(variables[i], new Null());
+                        else
+                            variableScope.Add(variables[i], rightVals[i]);
                     }
                 }
                 else {
@@ -473,7 +538,10 @@ namespace Euclid {
                 foreach (Expression e in arguments) {
                     args.Add(e.Run(variableScope, functionScope));
                 }
-                return func.Run(args, new Dictionary<string, object>(), functionScope);
+                List<object> res = func.Run(args, new Dictionary<string, object>(), functionScope);
+                if (res.Count == 1)
+                    return res[0];
+                return res;
             }
             public override string ToString() {
                 string res = String.Format("FunctionExpression<{0}\n", name);
