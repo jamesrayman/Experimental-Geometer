@@ -50,7 +50,7 @@ namespace Euclid {
                 }
                 return new List<Figure>();
             }
-            float d = Vector3.Dot(slope, plane.normal) / Vector3.Dot(p - plane.p, plane.normal);
+            float d = Vector3.Dot(p - plane.p, plane.normal) / Vector3.Dot(plane.normal, slope);
             return new List<Figure> { new Point(p + d * slope) };
         }
         public override List<Figure> Intersection(Sphere sphere) {
