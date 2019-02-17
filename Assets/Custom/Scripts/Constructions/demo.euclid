@@ -23,22 +23,26 @@ l4 = line(b c)
 l5 = line(b c)
 l6 = line(c d)
 
+ww = line(x y)
+ww.render = 1
+ww.start = x
+ww.end = y
 
 la = line(ba bb)
 lb = line(bc bd)
 
-la.render = 1
-lb.render = 1
+la.render = 0
+lb.render = 0
 la.start = ba
 la.end = bb
 lb.start = bc
 lb.end = bd
 
-ba.render = 1
-bb.render = 1
-bc.render = 1
-bd.render = 1
-bin.render = 1
+ba.render = 0
+bb.render = 0
+bc.render = 0
+bd.render = 0
+bin.render = 0
 
 cen.render = 1
 s.render = 1

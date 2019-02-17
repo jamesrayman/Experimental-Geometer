@@ -57,6 +57,7 @@ namespace Euclid {
                     if (fig.properties.ContainsKey("render")) {
                         if (Mathf.Approximately((float) fig.properties["render"], 1)) {
                             render.Add(fig);
+                            Debug.Log(fig);
                             fig.properties["name"] = variable;
                         }
                     }
