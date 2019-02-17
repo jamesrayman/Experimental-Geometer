@@ -33,13 +33,31 @@ namespace Euclid {
             return new List<Figure> { new Point(p + u * slope) };
         }
         public override List<Figure> Intersection(Circle circle) {
-            return new List<Figure>();
+            List<Figure> sphereIntersects = this.Intersection(new Sphere(circle.center, circle.radius));
+            List<Figure> res = new List<Figure>();
+            foreach (Figure fig in sphereIntersects) {
+                Vector3 p = (fig as Point).p;
+                if (Util.Approximately(Vector3.Dot(p - circle.center, circle.normal), 0)) {
+                    res.Add(fig);
+                }
+            }
+            return res;
         }
         public override List<Figure> Intersection(Plane plane) {
             return new List<Figure>();
         }
         public override List<Figure> Intersection(Sphere sphere) {
-            return new List<Figure>();
+            float u = Vector3.Dot(sphere.center - p, slope) / (slope).sqrMagnitude;
+            Vector3 c = p + u * slope;
+            float d = (c - sphere.center).magnitude;
+            if (Util.Approximately(d, sphere.radius))
+                return new List<Figure> { new Point(c) };
+            if (d > sphere.radius)
+                return new List<Figure>();
+            float v = Mathf.Sqrt(sphere.radius * sphere.radius - d * d);
+            Vector3 p1 = c - v * slope;
+            Vector3 p2 = c + v * slope;
+            return new List<Figure> { new Point(p1), new Point(p2) };
         }
 
         public override Figure PointOn() {
