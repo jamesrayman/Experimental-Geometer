@@ -64,6 +64,16 @@ namespace Euclid {
             return new List<Figure> { new Circle(c, r, norm) };
         }
 
+        public override Figure Binormal(Point point) {
+            return new Point(center).Binormal(point);
+        }
+        public override Figure Binormal(Line line) {
+            return new Point(center).Binormal(line);
+        }
+        public override Figure Binormal(Plane plane) {
+            return new Point(center).Binormal(plane);
+        }
+
         public override Figure PointOn () {
             return new Point(Random.onUnitSphere * radius + center);
         }

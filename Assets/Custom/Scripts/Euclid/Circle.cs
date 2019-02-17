@@ -55,6 +55,16 @@ namespace Euclid {
             return sphere.Intersection(this);
         }
 
+        public override Figure Binormal(Point point) {
+            return new Point(center).Binormal(point);
+        }
+        public override Figure Binormal(Line line) {
+            return new Point(center).Binormal(line);
+        }
+        public override Figure Binormal(Plane plane) {
+            return new Point(center).Binormal(plane);
+        }
+
         public override Figure PointOn() {
             Vector3 deviation = Vector3.Cross(normal, Util.RandomVector()).normalized;
             if (deviation == Vector3.zero) return PointOn();

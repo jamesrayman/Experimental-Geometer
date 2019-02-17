@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Euclid {
-	public class Plane : Figure {
-		// a point on the plane
-		public Vector3 p { get; }
-		public Vector3 normal { get; }
+    public class Plane : Figure {
+        // a point on the plane
+        public Vector3 p { get; }
+        public Vector3 normal { get; }
 
-		public Plane (Vector3 p, Vector3 normal) {
-			this.p = p;
-			this.normal = normal;
+        public Plane(Vector3 p, Vector3 normal) {
+            this.p = p;
+            this.normal = normal;
 
-			if (!Util.Approximately(this.normal.sqrMagnitude, 1)) {
-				this.normal = this.normal.normalized;
-			}
-		}
+            if (!Util.Approximately(this.normal.sqrMagnitude, 1)) {
+                this.normal = this.normal.normalized;
+            }
+        }
 
         public override List<Figure> Intersection(Point point) {
             return point.Intersection(this);
@@ -52,6 +52,12 @@ namespace Euclid {
             Circle cir = new Circle(c, Mathf.Sqrt(sphere.radius * sphere.radius - d * d), normal);
             return new List<Figure> { cir };
         }
+
+        public override Figure Binormal(Point point) {
+            return point.Binormal(this);
+        }
+        // Binormal is null for line and plane
+
 
         public override Figure PointOn() {
             return new Point(Vector3.Cross(normal, Util.RandomVector()) + p);

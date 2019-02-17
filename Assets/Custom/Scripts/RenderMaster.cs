@@ -35,7 +35,17 @@ public class RenderMaster : MonoBehaviour {
                 g.transform.parent = transform;
                 g.SetActive(true);
                 var render = g.GetComponent<LineRenderer>();
-                render.SetPositions(new Vector3[] { line.p + 1000 * line.slope, line.p - 1000 * line.slope });
+                Vector3[] v = new Vector3[] { line.p + 1000 * line.slope, line.p - 1000 * line.slope };
+
+                if (line.properties.ContainsKey("start")) {
+                    v[0] = (line.properties["start"] as Euclid.Point).p;
+                }
+                if (line.properties.ContainsKey("end")) {
+                    v[1] = (line.properties["end"] as Euclid.Point).p;
+                }
+
+                render.positionCount = 2;
+                render.SetPositions(v);
             }
             if (f is Euclid.Sphere) {
                 var sphere = f as Euclid.Sphere;
