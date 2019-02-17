@@ -10,14 +10,17 @@ public class RenderMaster : MonoBehaviour {
     public GameObject planePrefab;
     public GameObject circlePrefab;
 
+    public Euclid.Construction diagram;
+
     private void Start() {
-        Euclid.Construction diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/test.euclid");
-        figures = diagram.Execute();
+        diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/test.euclid");
 
         Render();
     }
 
     public void Render () {
+        figures = diagram.Execute();
+
         for (int i = transform.childCount-1; i > -1; i--) {
             Destroy(transform.GetChild(i));
         }
@@ -47,6 +50,7 @@ public class RenderMaster : MonoBehaviour {
                 render.positionCount = 2;
                 render.SetPositions(v);
             }
+
             if (f is Euclid.Sphere) {
                 var sphere = f as Euclid.Sphere;
                 GameObject g = Instantiate<GameObject>(spherePrefab);
@@ -55,6 +59,7 @@ public class RenderMaster : MonoBehaviour {
                 g.transform.SetPositionAndRotation(sphere.center, Quaternion.identity);
                 g.transform.localScale = Vector3.one * sphere.radius;
             }
+
             if (f is Euclid.Plane) {
                 var plane = f as Euclid.Plane;
                 GameObject g = Instantiate<GameObject>(planePrefab);
@@ -63,6 +68,7 @@ public class RenderMaster : MonoBehaviour {
                 g.transform.SetPositionAndRotation(plane.p, Quaternion.identity);
                 g.transform.LookAt(plane.normal);
             }
+
             if (f is Euclid.Circle) {
                 var circle = f as Euclid.Circle;
                 GameObject g = Instantiate<GameObject>(circlePrefab);

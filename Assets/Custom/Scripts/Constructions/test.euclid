@@ -1,12 +1,14 @@
 
-alpha = point ( 0.3 0.4 0.5 )
-beta = point ( 0.4 0.6 0.7 )
+alpha = point ( 0 2 0.5 )
+beta = point ( 0 1 0 )
 omega = sphere ( alpha beta )
 
 p = midpoint ( alpha beta )
 
 l1 l2 l3 l4 l5 l6 = tetrahedron(alpha beta)
 
+alpha.render = 1
+beta.render = 1
 l1.render = 1
 l2.render = 1
 l3.render = 1
