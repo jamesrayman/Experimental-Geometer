@@ -9,6 +9,8 @@ using UnityEditor;
 using System.IO;
 using System.Text.RegularExpressions;
 
+#pragma warning disable 0618
+
 [InitializeOnLoad]
 public class SteamVR_Update : EditorWindow
 {
