@@ -1,6 +1,6 @@
 
-alpha = point ( 3 0.4 5 )
-beta = point ( 4 1 7 )
+alpha = point ( 0.3 0.4 0.5 )
+beta = point ( 0.4 0.6 0.7 )
 omega = sphere ( alpha beta )
 
 p = midpoint ( alpha beta )

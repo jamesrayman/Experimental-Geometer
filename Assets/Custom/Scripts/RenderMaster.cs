@@ -11,7 +11,7 @@ public class RenderMaster : MonoBehaviour {
     public GameObject circlePrefab;
 
     private void Start() {
-        Euclid.Construction diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/amc_21.euclid");
+        Euclid.Construction diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/test.euclid");
         figures = diagram.Execute();
 
         Render();
