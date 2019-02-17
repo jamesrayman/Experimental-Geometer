@@ -20,13 +20,13 @@ namespace Euclid {
         }
 
         // Write all statements to file
-        private void WriteToFile() {
-            StreamWriter sw = File.CreateText(fileName);
-        }
+        //private void WriteToFile() {
+            //StreamWriter sw = File.CreateText(fileName);
+        //}
 
-        private List<Figure> RunConstruction() {
+        //private List<Figure> RunConstruction() {
 
-        }
+        //}
 
         private class SyntaxNode {
 
