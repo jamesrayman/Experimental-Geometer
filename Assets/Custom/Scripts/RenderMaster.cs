@@ -22,7 +22,7 @@ public class RenderMaster : MonoBehaviour {
         figures = diagram.Execute();
 
         for (int i = transform.childCount-1; i > -1; i--) {
-            Destroy(transform.GetChild(i));
+            Destroy(transform.GetChild(i).gameObject);
         }
         foreach (Euclid.Figure f in figures) {
             if (f is Euclid.Point) {
