@@ -11,14 +11,8 @@ public class RenderMaster : MonoBehaviour {
     public GameObject circlePrefab;
 
     private void Start() {
-        figures = new List<Euclid.Figure>();
-        figures.Add(new Euclid.Sphere(new Vector3(.3f, .2f, 0), 1.3f));
-        figures.Add(new Euclid.Point(-.1f, .1f, .3f));
-        figures.Add(new Euclid.Sphere(new Vector3(.1f, -.1f, .5f), 0.7f));
-        figures.Add(new Euclid.Line(new Vector3(0.4f, 0.6f, -0.1f), new Vector3(1, 1, 1)));
-        figures.Add(new Euclid.Line(new Vector3(0.4f, 0.6f, -0.1f), new Vector3(1, -1, 1)));
-        figures.Add(new Euclid.Plane(new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
-        figures.Add(new Euclid.Circle(new Vector3(0, 0, 0), 2, new Vector3(1, 1, 1)));
+        Euclid.Construction diagram = new Euclid.Construction("Assets/Custom/Scripts/Constructions/test.euclid");
+        figures = diagram.Execute();
 
         Render();
     }

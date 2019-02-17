@@ -43,7 +43,7 @@ namespace Euclid {
             functionScope.Add("null", nullFunc);
             functionScope.Add("space", space);
 
-            string[] files = Directory.GetFiles("Assets/Custom/Scripts/Euclid/Library", "*.euclid");
+            string[] files = Directory.GetFiles("Assets/Custom/Scripts/Euclid/Lib", "*.euclid");
             foreach (string f in files) {
                 RootStatement libRoot = ConstructAbstractSyntaxTree(Tokenize(ReadFromFile(f)));
                 libRoot.Run(variableScope, functionScope);
@@ -230,7 +230,7 @@ namespace Euclid {
                 this.tokenType = tokenType;
             }
 
-            public string ToString() {
+            public override string ToString() {
                 return token;
             }
         }
