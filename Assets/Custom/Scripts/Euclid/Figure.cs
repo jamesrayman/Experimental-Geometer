@@ -160,7 +160,7 @@ namespace Euclid {
 		
 		// Construct the line which is normal to both alpha and beta, or null if no or multiple such lines exist
 		public static Figure Binormal (Figure fAlpha, Figure fBeta) {
-			return new Null();
+			return fAlpha.Binormal(fBeta);
 		}
 		
 		// Construct a line given two points, or null if the points are not distinct

@@ -53,7 +53,12 @@ namespace Euclid {
             return point.Binormal(this);
         }
         public override Figure Binormal(Line line) {
-            return new Null();
+            if (Util.Approximately(slope, line.slope))
+                return new Null();
+            Vector3 normal = Vector3.Cross(slope, line.slope);
+            Plane plane = new Plane(p, Vector3.Cross(slope, normal)); // the plane made by sweeping [this] along [normal]
+            List<Figure> intersection = line.Intersection(plane);
+            return new Line((intersection[0] as Point).p, normal);
         }
         // Binormal is null for a line and a plane
 
