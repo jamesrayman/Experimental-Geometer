@@ -294,14 +294,20 @@ namespace Euclid {
 
         private class ConstructPointFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                object arg2 = args[1];
-                object arg3 = args[2];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                object arg2 = new Null();
+                object arg3 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (1 < args.Count)
+                    arg2 = args[1];
+                if (2 < args.Count)
+                    arg3 = args[2];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
-                if (arg2 is List<object>)
+                if (arg2 is List<object> && ((List<object>) arg2).Count > 0)
                     arg2 = ((List<object>) args[1])[0];
-                if (arg3 is List<object>)
+                if (arg3 is List<object> && ((List<object>) arg3).Count > 0)
                     arg3 = ((List<object>) args[2])[0];
                 Figure fig = Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3);
                 fig.properties["movable"] = 1f;
@@ -311,14 +317,20 @@ namespace Euclid {
 
         private class ConstructPlaneFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                object arg2 = args[1];
-                object arg3 = args[2];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                object arg2 = new Null();
+                object arg3 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (1 < args.Count)
+                    arg2 = args[1];
+                if (2 < args.Count)
+                    arg3 = args[2];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
-                if (arg2 is List<object>)
+                if (arg2 is List<object> && ((List<object>) arg2).Count > 0)
                     arg2 = ((List<object>) args[1])[0];
-                if (arg3 is List<object>)
+                if (arg3 is List<object> && ((List<object>) arg3).Count > 0)
                     arg3 = ((List<object>) args[2])[0];
                 return new List<object>() { Figure.ConstructPlane(arg1 as Figure, arg2 as Figure, arg3 as Figure) };
             }
@@ -326,11 +338,15 @@ namespace Euclid {
 
         private class ConstructSphereFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                object arg2 = args[1];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                object arg2 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (1 < args.Count)
+                    arg2 = args[1];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
-                if (arg2 is List<object>)
+                if (arg2 is List<object> && ((List<object>) arg2).Count > 0)
                     arg2 = ((List<object>) args[1])[0];
                 Figure res = Figure.ConstructSphere(arg1 as Figure, arg2 as Figure);
                 return new List<object> { res };
@@ -339,11 +355,15 @@ namespace Euclid {
 
         private class IntersectionFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                object arg2 = args[1];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                object arg2 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (1 < args.Count)
+                    arg2 = args[1];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
-                if (arg2 is List<object>)
+                if (arg2 is List<object> && ((List<object>) arg2).Count > 0)
                     arg2 = ((List<object>) args[1])[0];
                 List<Figure> res = Figure.Intersection(arg1 as Figure, arg2 as Figure);
                 List<object> obj = new List<object>();
@@ -355,8 +375,10 @@ namespace Euclid {
 
         private class PointOnFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
                 return new List<object> { Figure.PointOn(args[0] as Figure) };
             }
@@ -364,11 +386,15 @@ namespace Euclid {
 
         private class BinormalFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                object arg2 = args[1];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                object arg2 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (1 < args.Count)
+                    arg2 = args[1];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
-                if (arg2 is List<object>)
+                if (arg2 is List<object> && ((List<object>) arg2).Count > 0)
                     arg2 = ((List<object>) args[1])[0];
                 return new List<object> { Figure.Binormal(args[0] as Figure, args[1] as Figure) };
             }
@@ -376,11 +402,15 @@ namespace Euclid {
 
         private class ConstructLineFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                object arg2 = args[1];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                object arg2 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (1 < args.Count)
+                    arg2 = args[1];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
-                if (arg2 is List<object>)
+                if (arg2 is List<object> && ((List<object>) arg2).Count > 0)
                     arg2 = ((List<object>) args[1])[0];
                 return new List<object> { Figure.ConstructLine(args[0] as Figure, args[1] as Figure) };
             }
@@ -388,8 +418,10 @@ namespace Euclid {
 
         private class CenterFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
-                object arg1 = args[0];
-                if (arg1 is List<object>)
+                object arg1 = new Null();
+                if (0 < args.Count)
+                    arg1 = args[0];
+                if (arg1 is List<object> && ((List<object>) arg1).Count > 0)
                     arg1 = ((List<object>) args[0])[0];
                 return new List<object> { Figure.Center(arg1 as Figure) };
             }
