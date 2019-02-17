@@ -303,7 +303,9 @@ namespace Euclid {
                     arg2 = ((List<object>) args[1])[0];
                 if (arg3 is List<object>)
                     arg3 = ((List<object>) args[2])[0];
-                return new List<object>() { Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3) };
+                Figure fig = Figure.ConstructPoint((float) arg1, (float) arg2, (float) arg3);
+                fig.properties["movable"] = 1;
+                return new List<object> { fig };
             }
         }
 
