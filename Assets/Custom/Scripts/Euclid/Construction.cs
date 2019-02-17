@@ -64,17 +64,38 @@ namespace Euclid {
             return render;
         }
 
+        public void UpdatePoint(string name, Vector3 point) {
+            UpdateAssignment(new List<string> { name }, new FunctionExpression("point", new List<Expression> {
+                new RealExpression(point.x), new RealExpression(point.y), new RealExpression(point.z)
+            }));
+        }
+
+        private void UpdateAssignment(List<string> variables, Expression value) {
+            for (int i = 0; i < root.block.children.Count; i++) {
+                Statement s = root.block.children[i];
+                if (s is AssignmentStatement) {
+                    AssignmentStatement assign = s as AssignmentStatement;
+                    if (assign.variables == variables && assign.expression is FunctionExpression) {
+                        FunctionExpression func = assign.expression as FunctionExpression;
+                        if (func.name == "point") {
+                            root.block.children[i] = new AssignmentStatement(variables, value);
+                        }
+                    }
+                }
+            }
+        }
+
         private int tokenLoc;
         private List<Token> tokens;
 
-        public Expression constructExpression() {
+        private Expression ConstructExpression() {
             Regex real = new Regex("-?([0-9]+|[0-9]+\\.?[0-9]*|[0-9]*\\.?[0-9]+)");
             if (tokenLoc + 1 < tokens.Count && tokens[tokenLoc + 1].token == "(") {
                 string name = tokens[tokenLoc].token;
                 List<Expression> args = new List<Expression>();
                 tokenLoc += 2;
                 while (tokens[tokenLoc].token != ")") {
-                    args.Add(constructExpression());
+                    args.Add(ConstructExpression());
                 }
                 tokenLoc++;
                 return new FunctionExpression(name, args);
@@ -93,16 +114,16 @@ namespace Euclid {
             }
         }
 
-        public Statement constructStatement() {
+        private Statement ConstructStatement() {
             if (tokens[tokenLoc].token == "type_check") {
                 List<string> variables = new List<string>();
                 while (tokens[tokenLoc].token != "{") {
                     variables.Add(tokens[tokenLoc].token);
                 }
                 tokenLoc++;
-                BlockStatement successBlock = constructBlockStatement();
+                BlockStatement successBlock = ConstructBlockStatement();
                 tokenLoc++;
-                BlockStatement failBlock = constructBlockStatement();
+                BlockStatement failBlock = ConstructBlockStatement();
                 return new TypeCheckStatement(variables, successBlock, failBlock);
             }
             int j = tokenLoc;
@@ -111,7 +132,7 @@ namespace Euclid {
             }
             if (tokens[j].token == ".") {
                 tokenLoc = j + 3;
-                return new MemberAssignmentStatement(tokens[tokenLoc - 4].token, tokens[tokenLoc - 2].token, constructExpression());
+                return new MemberAssignmentStatement(tokens[tokenLoc - 4].token, tokens[tokenLoc - 2].token, ConstructExpression());
             }
             if (tokens[j].token == "=") {
                 if (tokens[j + 1].token == "construction") {
@@ -129,7 +150,7 @@ namespace Euclid {
                     }
                     j++;
                     tokenLoc = j;
-                    return new ConstructionStatement(name, args, results, constructBlockStatement());
+                    return new ConstructionStatement(name, args, results, ConstructBlockStatement());
                 }
                 else {
                     List<string> variables = new List<string>();
@@ -138,30 +159,28 @@ namespace Euclid {
                         tokenLoc++;
                     }
                     tokenLoc++;
-                    return new AssignmentStatement(variables, constructExpression());
+                    return new AssignmentStatement(variables, ConstructExpression());
                 }
             }
             return null;
         }
 
-        public BlockStatement constructBlockStatement() {
+        private BlockStatement ConstructBlockStatement() {
             List<Statement> children = new List<Statement>();
             while (tokenLoc < tokens.Count && tokens[tokenLoc].token != "}") {
-                children.Add(constructStatement());
+                children.Add(ConstructStatement());
             }
             tokenLoc++;
             return new BlockStatement(children);
         }
 
-        public RootStatement ConstructAbstractSyntaxTree(List<Token> tokens) {
+        private RootStatement ConstructAbstractSyntaxTree(List<Token> tokens) {
             this.tokens = tokens;
-            // foreach (Token s in tokens)
-            //     Debug.Log(s.token);
             this.tokenLoc = 0;
-            return new RootStatement(constructBlockStatement());
+            return new RootStatement(ConstructBlockStatement());
         }
 
-        public List<string> ReadFromFile(string fileName) {
+        private List<string> ReadFromFile(string fileName) {
             StreamReader reader = File.OpenText(fileName);
             List<string> result = new List<string>();
             string line;
@@ -171,7 +190,7 @@ namespace Euclid {
             return result;
         }
 
-        public List<Token> Tokenize(List<string> rawConstruction) {
+        private List<Token> Tokenize(List<string> rawConstruction) {
             List<Regex> tokenRegexes = new List<Regex>();
             tokenRegexes.Add(new Regex("^[A-Za-z_0-9]+$"));
             tokenRegexes.Add(new Regex("^[\\->=.]+$"));
@@ -225,7 +244,7 @@ namespace Euclid {
             return tokens;
         }
 
-        public class Token {
+        private class Token {
             public string token { get; }
             public int lineNum { get; }
             public int charNum { get; }
@@ -243,11 +262,11 @@ namespace Euclid {
             }
         }
 
-        public abstract class Function : SyntaxNode {
+        private abstract class Function : SyntaxNode {
             public abstract List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope);
         }
 
-        public class EuclidFunction : Function {
+        private class EuclidFunction : Function {
             public List<string> arguments { get; }
             public List<string> results { get; }
             public BlockStatement block { get; }
@@ -272,7 +291,7 @@ namespace Euclid {
             }
         }
 
-        public class ConstructPointFunction : Function {
+        private class ConstructPointFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 object arg2 = args[1];
@@ -287,7 +306,7 @@ namespace Euclid {
             }
         }
 
-        public class ConstructPlaneFunction : Function {
+        private class ConstructPlaneFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 object arg2 = args[1];
@@ -302,7 +321,7 @@ namespace Euclid {
             }
         }
 
-        public class ConstructSphereFunction : Function {
+        private class ConstructSphereFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 object arg2 = args[1];
@@ -314,7 +333,7 @@ namespace Euclid {
             }
         }
 
-        public class IntersectionFunction : Function {
+        private class IntersectionFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 object arg2 = args[1];
@@ -330,7 +349,7 @@ namespace Euclid {
             }
         }
 
-        public class PointOnFunction : Function {
+        private class PointOnFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 if (arg1 is List<object>)
@@ -339,7 +358,7 @@ namespace Euclid {
             }
         }
 
-        public class BinormalFunction : Function {
+        private class BinormalFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 object arg2 = args[1];
@@ -351,7 +370,7 @@ namespace Euclid {
             }
         }
 
-        public class ConstructLineFunction : Function {
+        private class ConstructLineFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 object arg2 = args[1];
@@ -363,7 +382,7 @@ namespace Euclid {
             }
         }
 
-        public class CenterFunction : Function {
+        private class CenterFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 object arg1 = args[0];
                 if (arg1 is List<object>)
@@ -372,30 +391,30 @@ namespace Euclid {
             }
         }
 
-        public class NullFunction : Function {
+        private class NullFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 return new List<object> { new Null() };
             }
         }
 
-        public class SpaceFunction : Function {
+        private class SpaceFunction : Function {
             public override List<object> Run(List<object> args, Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope) {
                 return new List<object> { new Space() };
             }
         }
 
-        public abstract class SyntaxNode {
+        private abstract class SyntaxNode {
         }
 
-        public abstract class Expression : SyntaxNode {
+        private abstract class Expression : SyntaxNode {
             public abstract object Run(Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope);
         }
 
-        public abstract class Statement : SyntaxNode {
+        private abstract class Statement : SyntaxNode {
             public abstract void Run(Dictionary<string, object> variableScope, Dictionary<string, Function> functionScope);
         }
 
-        public class RootStatement : Statement {
+        private class RootStatement : Statement {
             public BlockStatement block { get; }
             public RootStatement(BlockStatement block) {
                 this.block = block;
@@ -408,7 +427,7 @@ namespace Euclid {
             }
         }
 
-        public class BlockStatement : Statement {
+        private class BlockStatement : Statement {
             public List<Statement> children { get; }
             public BlockStatement(List<Statement> children) {
                 this.children = children;
@@ -427,7 +446,7 @@ namespace Euclid {
             }
         }
 
-        public class AssignmentStatement : Statement {
+        private class AssignmentStatement : Statement {
             public List<string> variables { get; }
             public Expression expression { get; }
             public AssignmentStatement(List<string> variables, Expression expression) {
@@ -460,7 +479,7 @@ namespace Euclid {
             }
         }
 
-        public class MemberAssignmentStatement : Statement {
+        private class MemberAssignmentStatement : Statement {
             public string variable { get; }
             public string member { get; }
             public Expression expression { get; }
@@ -481,7 +500,7 @@ namespace Euclid {
             }
         }
 
-        public class TypeCheckStatement : Statement {
+        private class TypeCheckStatement : Statement {
             public List<string> variables { get; }
             public BlockStatement successBlock { get; }
             public BlockStatement failBlock { get; }
@@ -504,7 +523,7 @@ namespace Euclid {
             }
         }
 
-        public class ConstructionStatement : Statement {
+        private class ConstructionStatement : Statement {
             public string name { get; }
             public List<string> arguments { get; }
             public List<string> results { get; }
@@ -533,7 +552,7 @@ namespace Euclid {
             }
         }
 
-        public class FunctionExpression : Expression {
+        private class FunctionExpression : Expression {
             public string name { get; }
             public List<Expression> arguments { get; }
             public FunctionExpression(string name, List<Expression> arguments) {
@@ -560,7 +579,7 @@ namespace Euclid {
             }
         }
 
-        public class RealExpression : Expression {
+        private class RealExpression : Expression {
             public Single real { get;  }
             public RealExpression(float real) {
                 this.real = real;
@@ -573,7 +592,7 @@ namespace Euclid {
             }
         }
 
-        public class VariableExpression : Expression { 
+        private class VariableExpression : Expression { 
             public string name { get; }
             public VariableExpression(string name) {
                 this.name = name;
