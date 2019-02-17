@@ -71,7 +71,7 @@ public class RenderMaster : MonoBehaviour {
                 g.transform.parent = transform;
                 g.SetActive(true);
                 g.transform.SetPositionAndRotation(sphere.center, Quaternion.identity);
-                g.transform.localScale = Vector3.one * sphere.radius;
+                g.transform.localScale =  Vector3.one * 2 * sphere.radius;
             }
 
             if (f is Euclid.Plane) {
